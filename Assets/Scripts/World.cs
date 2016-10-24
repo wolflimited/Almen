@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public struct Tile
 {
     public enum Type { Grass, Water };
-    public Sprite sprite;
+    public Material material;
+    public Sprite center, left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight;
 }
 
 [System.Serializable]
@@ -107,14 +108,46 @@ public class World : MonoBehaviour
                 if (!gameObject)
                 {
                     gameObject = new GameObject("(" + x + ", " + y + ")");
-                    gameObject.hideFlags = HideFlags.HideInHierarchy;
+                    gameObject.hideFlags = HideFlags.None;
                 }
                 SpriteRenderer spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
-                if (!spriteRenderer) spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
-                spriteRenderer.sprite = (tiles[x, y] == Tile.Type.Grass) ? grass.sprite : water.sprite;
+                if (!spriteRenderer)
+                    spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+
+                if (tiles[x, y] == Tile.Type.Grass)
+                {
+                    spriteRenderer.material = grass.material;
+                    if (tiles[x - 1, y] == Tile.Type.Water)
+                        if (tiles[x, y + 1] == Tile.Type.Water)
+                            spriteRenderer.sprite = grass.topLeft;
+                        else if (tiles[x, y - 1] == Tile.Type.Water)
+                            spriteRenderer.sprite = grass.bottomLeft;
+                        else
+                            spriteRenderer.sprite = grass.left;
+                    else if (tiles[x + 1, y] == Tile.Type.Water)
+                        if (tiles[x, y + 1] == Tile.Type.Water)
+                            spriteRenderer.sprite = grass.topRight;
+                        else if (tiles[x, y - 1] == Tile.Type.Water)
+                            spriteRenderer.sprite = grass.bottomRight;
+                        else
+                            spriteRenderer.sprite = grass.right;
+                    else if (tiles[x, y + 1] == Tile.Type.Water)
+                        spriteRenderer.sprite = grass.top;
+                    else if (tiles[x, y - 1] == Tile.Type.Water)
+                        spriteRenderer.sprite = grass.bottom;
+                    else
+                        spriteRenderer.sprite = grass.center;
+                }
+                else if (tiles[x, y] == Tile.Type.Water)
+                {
+                    spriteRenderer.material = water.material;
+                    spriteRenderer.sprite = water.center;
+                }
+
+                //spriteRenderer.sprite = (tiles[x, y] == Tile.Type.Grass) ? grass.sprite : water.sprite;
                 Vector2 size = spriteRenderer.sprite.bounds.size;
                 gameObject.transform.parent = transform;
-                gameObject.transform.position = new Vector3(size.x * x, size.y * y);
+                gameObject.transform.position = new Vector3(size.x * x, size.y * y) - new Vector3(size.x * width, size.y * height) * 0.5f;
                 gameObjects[x, y] = gameObject;
             }
         }
