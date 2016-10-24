@@ -6,7 +6,6 @@ using System.Collections.Generic;
 public struct Tile
 {
     public enum Type { Grass, Water };
-    public Material material;
     public Sprite center, left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight;
 }
 
@@ -116,7 +115,6 @@ public class World : MonoBehaviour
 
                 if (tiles[x, y] == Tile.Type.Grass)
                 {
-                    spriteRenderer.material = grass.material;
                     if (tiles[x - 1, y] == Tile.Type.Water)
                         if (tiles[x, y + 1] == Tile.Type.Water)
                             spriteRenderer.sprite = grass.topLeft;
@@ -139,10 +137,7 @@ public class World : MonoBehaviour
                         spriteRenderer.sprite = grass.center;
                 }
                 else if (tiles[x, y] == Tile.Type.Water)
-                {
-                    spriteRenderer.material = water.material;
                     spriteRenderer.sprite = water.center;
-                }
 
                 //spriteRenderer.sprite = (tiles[x, y] == Tile.Type.Grass) ? grass.sprite : water.sprite;
                 Vector2 size = spriteRenderer.sprite.bounds.size;
