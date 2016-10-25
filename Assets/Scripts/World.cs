@@ -5,7 +5,7 @@ using System.Collections.Generic;
 [System.Serializable]
 public struct Tile
 {
-    public enum Type { Grass, Water };
+    public enum Type { Grass, Water, Mountain };
     public Sprite center, left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight;
 }
 
@@ -31,11 +31,13 @@ public class World : MonoBehaviour
     public float falloff =  0.5f;
     [Range(0f, 1f)]
     public float seaLevel = 0.1f;
+    public float mountLevel = 0.5f;
 
     public Layer[] layers;
 
     public Tile grass;
     public Tile water;
+    public Tile mountain;
 
     private Tile.Type[,] tiles;
     public GameObject[,] gameObjects;
@@ -93,7 +95,22 @@ public class World : MonoBehaviour
                     }
                 }
                 value *= (1f - distance / (Mathf.Min(width, height) * falloff));
-                tiles[x, y] = (value >= seaLevel) ? Tile.Type.Grass : Tile.Type.Water;
+                if (value >= seaLevel)
+                {
+                    if (value >= mountLevel)
+                    {
+                        tiles[x, y] = Tile.Type.Mountain;
+                    }
+                    else
+                    {
+                    
+                        tiles[x, y] = Tile.Type.Grass;
+                    }
+                }
+                else
+                {
+                    tiles[x, y] = Tile.Type.Water;
+                }
             }
         }
 
@@ -138,7 +155,8 @@ public class World : MonoBehaviour
                 }
                 else if (tiles[x, y] == Tile.Type.Water)
                     spriteRenderer.sprite = water.center;
-
+                else if (tiles[x, y] == Tile.Type.Mountain)
+                    spriteRenderer.sprite = mountain.center;
                 //spriteRenderer.sprite = (tiles[x, y] == Tile.Type.Grass) ? grass.sprite : water.sprite;
                 Vector2 size = spriteRenderer.sprite.bounds.size;
                 gameObject.transform.parent = transform;
