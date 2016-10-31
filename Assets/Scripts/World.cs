@@ -31,6 +31,7 @@ public class World : MonoBehaviour
     public float falloff =  0.5f;
     [Range(0f, 1f)]
     public float seaLevel = 0.1f;
+    [Range(0f, 1f)]
     public float mountLevel = 0.5f;
 
     public Layer[] layers;
@@ -96,21 +97,12 @@ public class World : MonoBehaviour
                 }
                 value *= (1f - distance / (Mathf.Min(width, height) * falloff));
                 if (value >= seaLevel)
-                {
                     if (value >= mountLevel)
-                    {
                         tiles[x, y] = Tile.Type.Mountain;
-                    }
                     else
-                    {
-                    
                         tiles[x, y] = Tile.Type.Grass;
-                    }
-                }
                 else
-                {
                     tiles[x, y] = Tile.Type.Water;
-                }
             }
         }
 
@@ -165,4 +157,6 @@ public class World : MonoBehaviour
             }
         }
     }
+
+
 }
