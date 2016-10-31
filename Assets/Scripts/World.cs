@@ -5,8 +5,13 @@ using System.Collections.Generic;
 [System.Serializable]
 public struct Tile
 {
-    public enum Type { Grass, Water, Mountain };
+    public enum Type { Grass, Water, Mountain, Coal, Iron };
     public Sprite center, left, right, top, bottom, topLeft, topRight, bottomLeft, bottomRight;
+    public int food;
+    public int production;
+    public int gold;
+    public int water;
+    public int air;
 }
 
 [System.Serializable]
@@ -38,6 +43,7 @@ public class World : MonoBehaviour
     public Tile grass;
     public Tile water;
     public Tile mountain;
+    public Tile coal;
 
     private Tile.Type[,] tiles;
     public GameObject[,] gameObjects;
@@ -99,7 +105,17 @@ public class World : MonoBehaviour
                 {
                     if (value >= mountLevel)
                     {
+
                         tiles[x, y] = Tile.Type.Mountain;
+                        float mresourcen = Random.Range(1, 101) / 100;
+                        Debug.Log(mresourcen);
+                        if (mresourcen > 0.5f)
+                        {
+                            if (mresourcen > 0.8f)
+                            {
+                                tiles[x, y] = Tile.Type.Coal;
+                            }
+                        }
                     }
                     else
                     {
@@ -157,6 +173,8 @@ public class World : MonoBehaviour
                     spriteRenderer.sprite = water.center;
                 else if (tiles[x, y] == Tile.Type.Mountain)
                     spriteRenderer.sprite = mountain.center;
+                else if (tiles[x, y] == Tile.Type.Coal)
+                    spriteRenderer.sprite = coal.center;
                 //spriteRenderer.sprite = (tiles[x, y] == Tile.Type.Grass) ? grass.sprite : water.sprite;
                 Vector2 size = spriteRenderer.sprite.bounds.size;
                 gameObject.transform.parent = transform;
