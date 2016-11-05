@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -40,6 +41,7 @@ public class World : MonoBehaviour
     public float mountLevel = 0.5f;
 
     public Layer[] layers;
+    public Sprite[] tileMap;
 
     public Tile grass;
     public Tile water;
@@ -48,6 +50,7 @@ public class World : MonoBehaviour
 
     private Tile.Type[,] tiles;
     public GameObject[,] gameObjects;
+
 
     void Awake()
     {
@@ -107,7 +110,7 @@ public class World : MonoBehaviour
                     {
 
                         tiles[x, y] = Tile.Type.Mountain;
-                        float mresourcen = Random.value;
+                        float mresourcen = UnityEngine.Random.value;
                         if (mresourcen > 0.5f)
                         {
                             if (mresourcen > 0.8f)
@@ -139,6 +142,14 @@ public class World : MonoBehaviour
                 if (!spriteRenderer)
                     spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
 
+                int bitmask = 0;
+                bitmask += 1 * Convert.ToInt32(tiles[x, y] != tiles[x, y + 1]);
+                bitmask += 2 * Convert.ToInt32(tiles[x, y] != tiles[x + 1, y]);
+                bitmask += 4 * Convert.ToInt32(tiles[x, y] != tiles[x - 1, y]);
+                bitmask += 8 * Convert.ToInt32(tiles[x, y] != tiles[x, y - 1]);
+                spriteRenderer.sprite = tileMap[bitmask];
+                //bitmask += 16 * (int)t
+                /*
                 if (tiles[x, y] == Tile.Type.Grass)
                 {
                     if (tiles[x - 1, y] == Tile.Type.Water)
@@ -168,6 +179,7 @@ public class World : MonoBehaviour
                     spriteRenderer.sprite = mountain.center;
                 else if (tiles[x, y] == Tile.Type.Coal)
                     spriteRenderer.sprite = coal.center;
+                    */
                 //spriteRenderer.sprite = (tiles[x, y] == Tile.Type.Grass) ? grass.sprite : water.sprite;
                 Vector2 size = spriteRenderer.sprite.bounds.size;
                 gameObject.transform.parent = transform;
